@@ -182,22 +182,22 @@ display:none; z-index:100; text-align:center; max-width:320px;
 <audio id="audio" preload="auto"></audio>
 
 <script>
-// Try to load audio
 const audio = document.getElementById('audio');
 const errMsg = document.getElementById('errMsg');
 
-// Try multiple possible filenames
-const filenames = ['I_live_for_Fractures.mp3', 'I live for Fractures.mp3', 'fractures.mp3'];
+// Try filenames in order
+const filenames = ['I live for Fractures.mp3', 'I_live_for_Fractures.mp3', 'song.mp3', 'fractures.mp3'];
+let tryIdx = 0;
 let loaded = false;
 
-function tryLoad(i) {
-  if (i >= filenames.length) { errMsg.style.display = 'block'; return; }
-  audio.src = filenames[i];
+function tryLoad() {
+  if (tryIdx >= filenames.length) { errMsg.style.display = 'block'; return; }
+  audio.src = filenames[tryIdx];
   audio.load();
 }
-audio.addEventListener('error', () => { if (!loaded) tryLoad(filenames.indexOf(audio.src.split('/').pop()) + 1); });
+audio.addEventListener('error', () => { if (!loaded) { tryIdx++; tryLoad(); } });
 audio.addEventListener('canplay', () => { loaded = true; errMsg.style.display = 'none'; });
-tryLoad(0);
+tryLoad();
 
 const LYRICS = [
   { t:0,   text:"Chorus",                                   lbl:true },
