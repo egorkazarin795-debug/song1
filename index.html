@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I Live for Fractures</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
+
+- { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+min-height: 100vh;
+background: #09060f;
+display: flex;
+align-items: center;
+justify-content: center;
+font-family: ‘DM Sans’, sans-serif;
+overflow: hidden;
+position: relative;
+}
+
+/* Animated background orbs */
+.orb {
+position: fixed;
+border-radius: 50%;
+pointer-events: none;
+animation: floatOrb 9s ease-in-out infinite;
+}
+.o1 { width:500px;height:500px;top:-150px;right:-100px;background:radial-gradient(circle,rgba(61,31,110,0.7),transparent 70%);animation-delay:0s; }
+.o2 { width:400px;height:400px;bottom:-120px;left:-80px;background:radial-gradient(circle,rgba(76,29,149,0.6),transparent 70%);animation-delay:-4s; }
+.o3 { width:300px;height:300px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(168,85,247,0.2),transparent 70%);animation-delay:-2s; }
+
+@keyframes floatOrb {
+0%,100% { transform: translateY(0); }
+50% { transform: translateY(-30px); }
+}
+.o3 { animation: floatOrb3 9s ease-in-out infinite; animation-delay:-2s; }
+@keyframes floatOrb3 {
+0%,100% { transform: translate(-50%,-50%) translateY(0); }
+50% { transform: translate(-50%,-50%) translateY(-30px); }
+}
+
+/* Particles */
+.particles {
+position: fixed; inset: 0; pointer-events: none; overflow: hidden;
+}
+.p {
+position: absolute;
+border-radius: 50%;
+animation: rise linear infinite;
+}
+@keyframes rise {
+0% { transform: translateY(100vh) scale(1); opacity: 0; }
+10% { opacity: 1; }
+90% { opacity: 1; }
+100% { transform: translateY(-20px) scale(0.8); opacity: 0; }
+}
+
+/* Card */
+.card {
+position: relative;
+z-index: 10;
+width: 340px;
+background: linear-gradient(150deg, rgba(26,10,46,0.97), rgba(9,6,15,0.99));
+border: 1px solid rgba(139,92,246,0.25);
+border-radius: 24px;
+padding: 26px 22px 22px;
+box-shadow: 0 0 80px rgba(139,92,246,0.15), 0 20px 60px rgba(0,0,0,0.8);
+animation: fadeUp 0.8s ease both;
+}
+@keyframes fadeUp {
+from { opacity:0; transform:translateY(24px); }
+to   { opacity:1; transform:translateY(0); }
+}
+
+/* Album art */
+.art {
+width: 100%;
+aspect-ratio: 1;
+border-radius: 16px;
+background: linear-gradient(135deg, #1a0a2e, #2d1254, #1a0a2e);
+position: relative;
+overflow: hidden;
+margin-bottom: 20px;
+box-shadow: 0 8px 32px rgba(139,92,246,0.3);
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.art-glow {
+position: absolute; inset: 0;
+background:
+radial-gradient(circle at 30% 30%, rgba(168,85,247,0.3), transparent 55%),
+radial-gradient(circle at 70% 70%, rgba(109,40,217,0.2), transparent 50%);
+}
+.bolt {
+position: relative; z-index: 1;
+width: 60%; height: 60%;
+animation: pulseBolt 3s ease-in-out infinite;
+filter: drop-shadow(0 0 10px rgba(168,85,247,0.6));
+}
+.bolt.playing {
+filter: drop-shadow(0 0 22px rgba(168,85,247,0.95));
+}
+@keyframes pulseBolt {
+0%,100% { transform:scale(1); opacity:0.8; }
+50%      { transform:scale(1.05); opacity:1; }
+}
+
+.title {
+font-family: ‘Playfair Display’, Georgia, serif;
+font-size: 20px;
+font-weight: 700;
+background: linear-gradient(90deg, #e2d9f3, #c4b5fd);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+margin-bottom: 3px;
+}
+.artist {
+font-size: 12px;
+color: #9d8bc4;
+letter-spacing: 0.5px;
+margin-bottom: 18px;
+}
+
+/* Lyrics */
+.lyr-wrap {
+height: 200px;
+overflow: hidden;
+position: relative;
+margin-bottom: 18px;
+}
+.lyr-wrap::before, .lyr-wrap::after {
+content: ‘’;
+position: absolute;
+left: 0; right: 0;
+height: 44px;
+pointer-events: none;
+z-index: 2;
+}
+.lyr-wrap::before { top:0; background: linear-gradient(to bottom, #09060f, transparent); }
+.lyr-wrap::after  { bottom:0; background: linear-gradient(to top, #09060f, transparent); }
+
+.lyr-scroll {
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 2px;
+transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94);
+padding: 70px 0;
+}
+.ll {
+text-align: center;
+padding: 5px 10px;
+border-radius: 8px;
+width: 100%;
+transition: background 0.5s;
+cursor: pointer;
+}
+.ll span {
+font-size: 13.5px;
+font-weight: 300;
+color: rgba(157,139,196,0.35);
+display: block;
+line-height: 1.55;
+transition: all 0.55s ease;
+}
+.ll.lbl span {
+font-size: 9.5px;
+text-transform: uppercase;
+letter-spacing: 2.5px;
+font-weight: 500;
+color: rgba(139,92,246,0.4);
+padding-top: 8px;
+}
+.ll.active { background: rgba(139,92,246,0.1); }
+.ll.active span {
+font-size: 15.5px;
+font-weight: 500;
+color: #ffffff;
+text-shadow: 0 0 20px rgba(168,85,247,0.6);
+}
+.ll.near span {
+font-size: 14px;
+color: rgba(196,181,253,0.65);
+}
+
+/* Time & progress */
+.times {
+display: flex;
+justify-content: space-between;
+font-size: 11px;
+color: #9d8bc4;
+margin-bottom: 6px;
+}
+.prog {
+width: 100%;
+height: 3px;
+background: rgba(139,92,246,0.18);
+border-radius: 10px;
+cursor: pointer;
+position: relative;
+margin-bottom: 14px;
+}
+.prog-fill {
+height: 100%;
+background: linear-gradient(90deg, #4c1d95, #8b5cf6);
+border-radius: 10px;
+width: 0%;
+position: relative;
+transition: width 0.15s linear;
+}
+.prog-dot {
+position: absolute;
+right: -5px; top: 50%;
+transform: translateY(-50%);
+width: 11px; height: 11px;
+background: #fff;
+border-radius: 50%;
+box-shadow: 0 0 8px rgba(168,85,247,0.9);
+opacity: 0;
+transition: opacity 0.2s;
+}
+.prog:hover .prog-dot { opacity: 1; }
+
+/* Controls */
+.controls {
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 20px;
+}
+.btn {
+background: none;
+border: none;
+cursor: pointer;
+color: #9d8bc4;
+padding: 8px;
+border-radius: 50%;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: color 0.2s;
+}
+.btn:hover { color: #e2d9f3; }
+.btn.play {
+width: 50px; height: 50px;
+background: linear-gradient(135deg, #7c3aed, #a855f7);
+color: #fff;
+box-shadow: 0 4px 20px rgba(139,92,246,0.45);
+transition: transform 0.15s, box-shadow 0.15s;
+}
+.btn.play:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(139,92,246,0.65); }
+.btn.play:active { transform: scale(0.96); }
+
+/* Visualizer */
+.viz {
+display: flex;
+align-items: flex-end;
+justify-content: center;
+gap: 3px;
+height: 20px;
+margin-top: 13px;
+opacity: 0;
+transition: opacity 0.5s;
+}
+.viz.on { opacity: 1; }
+.vb {
+width: 3px;
+background: linear-gradient(to top, #4c1d95, #8b5cf6);
+border-radius: 2px;
+height: 4px;
+}
+</style>
+
+</head>
+<body>
+
+<!-- Background -->
+
+<div class="orb o1"></div>
+<div class="orb o2"></div>
+<div class="orb o3"></div>
+
+<!-- Particles -->
+
+<div class="particles" id="particles"></div>
+
+<!-- Player card -->
+
+<div class="card">
+  <div class="art">
+    <div class="art-glow"></div>
+    <svg class="bolt" id="bolt" viewBox="0 0 200 200" fill="none">
+      <defs>
+        <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#e9d5ff"/>
+          <stop offset="55%" stop-color="#a855f7"/>
+          <stop offset="100%" stop-color="#6d28d9"/>
+        </linearGradient>
+      </defs>
+      <polygon points="110,15 78,95 100,95 70,185 142,80 118,80 150,15" fill="url(#g1)"/>
+      <polygon points="110,15 78,95 100,95 70,185 142,80 118,80 150,15" fill="none" stroke="rgba(221,214,254,0.25)" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <div class="title">I Live for Fractures</div>
+  <div class="artist">George Karin</div>
+
+  <div class="lyr-wrap">
+    <div class="lyr-scroll" id="scroll"></div>
+  </div>
+
+  <div class="times">
+    <span id="cur">0:00</span>
+    <span id="tot">3:50</span>
+  </div>
+  <div class="prog" id="prog">
+    <div class="prog-fill" id="fill">
+      <div class="prog-dot"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="btn" id="btnPrev">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+    </button>
+    <button class="btn play" id="btnPlay">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" id="ico"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <button class="btn" id="btnNext">
+      <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zm2-8.14 5.43 3.86L8 15.86V9.86zM16 6h2v12h-2z"/></svg>
+    </button>
+  </div>
+
+  <div class="viz" id="viz"></div>
+</div>
+
+<script>
+// ── Particles ──────────────────────────────
+const pWrap = document.getElementById('particles');
+for (let i = 0; i < 55; i++) {
+  const d = document.createElement('div');
+  d.className = 'p';
+  const size = Math.random() * 3 + 1;
+  const dur  = Math.random() * 12 + 8;
+  const del  = Math.random() * 12;
+  const left = Math.random() * 100;
+  const purple = Math.random() > 0.5;
+  d.style.cssText = `
+    width:${size}px; height:${size}px; left:${left}%;
+    background:${purple ? 'rgba(139,92,246,0.7)' : 'rgba(196,181,253,0.6)'};
+    box-shadow: 0 0 ${size*2}px ${purple ? 'rgba(168,85,247,0.5)' : 'rgba(196,181,253,0.4)'};
+    animation-duration:${dur}s; animation-delay:-${del}s;
+    bottom: -10px;
+  `;
+  pWrap.appendChild(d);
+}
+
+// ── Lyrics ─────────────────────────────────
+const LYRICS = [
+  { t:0,   text:'Chorus',                              lbl:true },
+  { t:4,   text:'I live for Fractures' },
+  { t:9,   text:'I live for Fractures' },
+  { t:14,  text:'I live for Fractures' },
+  { t:20,  text:'Verse',                               lbl:true },
+  { t:22,  text:'Shirt and jeans, number one' },
+  { t:27,  text:"But it's feeling so fun" },
+  { t:32,  text:'I like to play the show' },
+  { t:36,  text:"and I don't care" },
+  { t:40,  text:"How I look, 'cause I'm in the role" },
+  { t:47,  text:'Chorus',                              lbl:true },
+  { t:49,  text:'I live for Fractures' },
+  { t:54,  text:'I live for Fractures' },
+  { t:59,  text:'I live for Fractures' },
+  { t:65,  text:'Bridge',                              lbl:true },
+  { t:67,  text:'Take me in your fractures' },
+  { t:73,  text:'Take me in your fractures' },
+  { t:80,  text:'Outro',                               lbl:true },
+  { t:83,  text:'Take me in your fractures' },
+  { t:88,  text:'I know your pain' },
+  { t:93,  text:'Take me in your game' },
+  { t:98,  text:"'Cause I want the fame, fame, fame, fame" },
+  { t:104, text:'Now I want more' },
+  { t:109, text:'It needs me more' },
+  { t:114, text:'Now I want more' },
+  { t:120, text:'Bridge',                              lbl:true },
+  { t:123, text:'Take me in your fractures' },
+  { t:129, text:'Take me in your fractures' },
+];
+
+const scrollEl = document.getElementById('scroll');
+const lineEls  = [];
+LYRICS.forEach((l, i) => {
+  const div = document.createElement('div');
+  div.className = 'll' + (l.lbl ? ' lbl' : '');
+  div.innerHTML  = `<span>${l.text}</span>`;
+  if (!l.lbl) div.onclick = () => { audio.currentTime = l.t; };
+  scrollEl.appendChild(div);
+  lineEls.push(div);
+});
+
+let lastActive = -1;
+function syncLyrics(t) {
+  let active = -1;
+  for (let i = LYRICS.length - 1; i >= 0; i--) {
+    if (t >= LYRICS[i].t) { active = i; break; }
+  }
+  if (active === lastActive) return;
+  lastActive = active;
+
+  lineEls.forEach((el, i) => {
+    el.classList.remove('active', 'near');
+    if (i === active) el.classList.add('active');
+    else if (Math.abs(i - active) === 1) el.classList.add('near');
+  });
+
+  if (active >= 0) {
+    const wrap    = document.querySelector('.lyr-wrap');
+    const el      = lineEls[active];
+    const offsetY = el.offsetTop - wrap.clientHeight / 2 + el.offsetHeight / 2;
+    scrollEl.style.transform = `translateY(${-offsetY}px)`;
+  }
+}
+
+// ── Audio ──────────────────────────────────
+const audio = new Audio();
+// Пробуем разные возможные названия файла
+const names = [
+  'I live for Fractures.mp3',
+  'I_live_for_Fractures.mp3',
+  'song.mp3'
+];
+let ni = 0;
+function tryNext() {
+  if (ni >= names.length) return;
+  audio.src = names[ni++];
+}
+audio.addEventListener('error', tryNext);
+tryNext();
+
+// ── Visualizer ─────────────────────────────
+const viz = document.getElementById('viz');
+const bars = [];
+for (let i = 0; i < 24; i++) {
+  const b = document.createElement('div');
+  b.className = 'vb';
+  viz.appendChild(b);
+  bars.push(b);
+}
+let vizRaf;
+function animViz() {
+  bars.forEach(b => {
+    const cur = parseFloat(b.style.height) || 4;
+    b.style.height = (cur + (Math.random() * 17 + 2 - cur) * 0.2) + 'px';
+  });
+  vizRaf = requestAnimationFrame(animViz);
+}
+
+// ── Controls ───────────────────────────────
+const ico  = document.getElementById('ico');
+const bolt = document.getElementById('bolt');
+
+function fmt(s) {
+  return Math.floor(s/60) + ':' + String(Math.floor(s%60)).padStart(2,'0');
+}
+
+function setPlay(on) {
+  if (on) {
+    audio.play().catch(() => {});
+    ico.innerHTML  = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+    bolt.classList.add('playing');
+    viz.classList.add('on');
+    animViz();
+  } else {
+    audio.pause();
+    ico.innerHTML  = '<path d="M8 5v14l11-7z"/>';
+    bolt.classList.remove('playing');
+    viz.classList.remove('on');
+    cancelAnimationFrame(vizRaf);
+    bars.forEach(b => b.style.height = '4px');
+  }
+}
+
+document.getElementById('btnPlay').onclick = () => setPlay(audio.paused);
+document.getElementById('btnPrev').onclick = () => { audio.currentTime = 0; };
+document.getElementById('btnNext').onclick = () => { audio.currentTime = audio.duration || 229; };
+audio.addEventListener('ended', () => setPlay(false));
+
+audio.addEventListener('timeupdate', () => {
+  const t   = audio.currentTime;
+  const dur = audio.duration || 229.99;
+  document.getElementById('fill').style.width = (t / dur * 100) + '%';
+  document.getElementById('cur').textContent   = fmt(t);
+  syncLyrics(t);
+});
+
+audio.addEventListener('loadedmetadata', () => {
+  document.getElementById('tot').textContent = fmt(audio.duration);
+});
+
+document.getElementById('prog').addEventListener('click', e => {
+  const r   = e.currentTarget.getBoundingClientRect();
+  const rat = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width));
+  audio.currentTime = rat * (audio.duration || 229.99);
+});
+
+syncLyrics(0);
+</script>
+
+</body>
+</html>
